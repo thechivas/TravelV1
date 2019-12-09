@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <title>Travel App Cesar</title>
+    <!-- <script src="key.js"></script> -->
+    <script>
+        var xmlhttp;
+        var key = "9c181ef3732444e1bec569678b50dae7";
+        window.onload = function() {
+            // alert("Onload");    //Checking onLoad function
+            document.addEventListener('deviceready', init);
+        }
+
+        function init() {
+            // alert("hey");   //Init check
+            // navigator.geolocation.getCurrentPosition(success, error);
+            success();
+        }
+
+        // function success(position) {
+        function success(position) {
+            // var lat = position.coords.latitude;
+            // var long = position.coords.longitude;
+            var lat = 36.778259;
+            var long = -119.417931;
+            document.getElementById('lat').innerHTML = lat;
+            document.getElementById('long').innerHTML = long;
+            getAreaInfo(lat, long);
+        }
+
+        function getAreaInfo(lat, long) {
+            // https://api.opencagedata.com/geocode/v1/json?q=LAT+LNG&key=9c181ef3732444e1bec569678b50dae7
+            var url = "https://api.opencagedata.com/geocode/v1/json?q=";
+            url += lat + "+" + long;
+            url += "&key=" + key;
+            xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = processPlace;
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        //When we get a ready state of 4 we know communication is done
+        function processPlace() {
+            var country = "";
+            if (xmlhttp.readyState == 4) {
+                var theJSON = xmlhttp.responseText;
+                // console.log(theJSON);
+                //We are parsing our answer here
+                result = JSON.parse(theJSON);
+                console.log(result);
+                country = result.results[0].components.country;
+                var resultCountry = "You are located in " + country;
+
+
+            }
+            document.getElementById('result').innerHTML = resultCountry;
+        }
+
+
+
+
+        function error(e) {
+            alert(e.message);
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Device Location </h1>
+    <p>Latitude: <output id="lat"></output></p>
+    <p>Longitude: <output id="long"></output></p>
+    <div id="result"></div>
+    <script type="text/javascript" src="cordova.js"></script>
+</body>
+
+</html>
